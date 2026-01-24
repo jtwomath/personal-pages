@@ -7,5 +7,27 @@
 <body>
   <h1>안녕하세요</h1>
   <p>Cloudflare Pages 첫 페이지입니다.</p>
+
+<h2>API 테스트</h2>
+<button id="btnHello">/api/hello 호출</button>
+<pre id="out" style="padding:12px; border:1px solid #ccc; border-radius:8px;"></pre>
+
+<script>
+  document.getElementById("btnHello").addEventListener("click", async () => {
+    const out = document.getElementById("out");
+    out.textContent = "호출 중...";
+
+    try {
+      const res = await fetch("/api/hello");
+      if (!res.ok) throw new Error("HTTP " + res.status);
+
+      const data = await res.json();
+      out.textContent = JSON.stringify(data, null, 2);
+    } catch (err) {
+      out.textContent = "실패: " + err.message;
+    }
+  });
+</script>
+  
 </body>
 </html>
