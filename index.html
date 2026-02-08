@@ -22,12 +22,23 @@
       if (!res.ok) throw new Error("HTTP " + res.status);
 
       const data = await res.json();
-      out.textContent = JSON.stringify(data, null, 2);
+
+      // ✅ UTC → KST 변환
+      const utc = new Date(data.time);
+      const kst = new Date(utc.getTime() + 9 * 60 * 60 * 1000);
+
+      const result = {
+        message: data.message,
+        utcTime: utc.toISOString(),
+        kstTime: kst.toLocaleString("ko-KR"),
+      };
+
+      out.textContent = JSON.stringify(result, null, 2);
     } catch (err) {
       out.textContent = "실패: " + err.message;
     }
   });
 </script>
-  
+
 </body>
 </html>
