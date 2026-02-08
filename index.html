@@ -27,13 +27,16 @@
       const utc = new Date(data.time);
       const kst = new Date(utc.getTime() + 9 * 60 * 60 * 1000);
 
+      const nowLocal = new Date();
+      
       const result = {
-        message: data.message,
-        utcTime: utc.toISOString(),
-        kstTime: kst.toLocaleString("ko-KR"),
+        serverUtc: utc.toISOString(),
+        serverKst: kst.toLocaleString("ko-KR"),
+        browserLocal: nowLocal.toLocaleString("ko-KR")
       };
-
+      
       out.textContent = JSON.stringify(result, null, 2);
+
     } catch (err) {
       out.textContent = "실패: " + err.message;
     }
