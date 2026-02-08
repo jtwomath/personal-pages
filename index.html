@@ -24,14 +24,10 @@
       const data = await res.json();
 
       // ✅ UTC → KST 변환
-      //const utc = new Date(data.time);
+      const utc = new Date(data.time);
       const kst = new Date(utc.getTime() + 9 * 60 * 60 * 1000);
 
       const nowLocal = new Date();
-      
-      const data = await res.json();
-      
-      const utc = new Date(data.time);
       
       const result = {
         serverUtc: utc.toISOString(),
