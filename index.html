@@ -23,21 +23,19 @@
 
       const data = await res.json();
 
-      // ✅ UTC → KST 변환
-      const utc = new Date(data.time);
-      const kst = new Date(utc.getTime() + 9 * 60 * 60 * 1000);
+      // time / utcTime / serverUtc 중 뭐가 와도 처리
+      const rawUtc = data.serverUtc ?? data.utcTime ?? data.time ?? null;
+      const utc = rawUtc ? new Date(rawUtc) : new Date();
 
-      const nowLocal = new Date();
-      
       const result = {
         serverUtc: utc.toISOString(),
         serverKst: utc.toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }),
         browserLocal: new Date().toLocaleString("ko-KR"),
-        browserTZ: Intl.DateTimeFormat().resolvedOptions().timeZone
+        browserTZ: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        rawFromApi: rawUtc, // 디버그용(원하면 삭제)
       };
-      
-      out.textContent = JSON.stringify(result, null, 2);
 
+      out.textContent = JSON.stringify(result, null, 2);
     } catch (err) {
       out.textContent = "실패: " + err.message;
     }
