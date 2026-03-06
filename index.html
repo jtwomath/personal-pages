@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>나의 일정</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, "Malgun Gothic", sans-serif;
+      background: #f4f6f8;
+      color: #222;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+      font-size: 32px;
+    }
+
+    .subtitle {
+      margin-bottom: 24px;
+      color: #666;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    h2 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      font-size: 24px;
+      border-left: 6px solid #4a90e2;
+      padding-left: 10px;
+    }
+
+    h3 {
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-size: 18px;
+      color: #333;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 20px;
+      line-height: 1.8;
+    }
+
+    .weekday-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .day-box {
+      background: #f8fafc;
+      border: 1px solid #e3e8ee;
+      border-radius: 10px;
+      padding: 12px;
+    }
+
+    .day-box strong {
+      display: block;
+      margin-bottom: 6px;
+      color: #1d4f91;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #777;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>나의 일정</h1>
+    <p class="subtitle">부 프로젝트용 간단 일정 페이지</p>
+
+    <div class="card">
+      <h2>평일 공통 시간표</h2>
+      <ul>
+        <li>19:00 ~ 20:00 : 휴식 / 식사</li>
+        <li>20:00 ~ 20:30 : 가벼운 공부 (영상 / 자료 / 정리)</li>
+        <li>20:30 ~ 21:40 : 개발 집중 시간</li>
+        <li>21:40 ~ 22:00 : 정리 + 기록</li>
+        <li>22:00 이후 : 자유 시간</li>
+      </ul>
+
+      <div class="weekday-grid">
+        <div class="day-box">
+          <strong>월요일</strong>
+          엑셀 자동화 공부
+        </div>
+        <div class="day-box">
+          <strong>화요일</strong>
+          안드로이드 앱 개발
+        </div>
+        <div class="day-box">
+          <strong>수요일</strong>
+          자동화 프로젝트
+        </div>
+        <div class="day-box">
+          <strong>목요일</strong>
+          안드로이드 기능 추가
+        </div>
+        <div class="day-box">
+          <strong>금요일</strong>
+          가벼운 공부 / 기술 탐색
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>토요일</h2>
+      <ul>
+        <li>10:00 ~ 12:00 : 개인 프로젝트</li>
+        <li>12:00 ~ 14:00 : 휴식</li>
+        <li>14:00 ~ 16:00 : 개발 집중</li>
+        <li>저녁 이후 : 자유 시간</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>일요일</h2>
+      <ul>
+        <li>10:00 ~ 12:00 : 앱 개발</li>
+        <li>12:00 ~ 14:00 : 휴식</li>
+        <li>14:00 ~ 16:00 : 자동화 프로젝트</li>
+        <li>16:00 이후 : 완전 휴식</li>
+      </ul>
+    </div>
+
+    <div class="footer">
+      꾸준히만 가도 충분합니다.
+    </div>
+  </div>
+</body>
+</html>
