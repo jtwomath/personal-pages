@@ -3,150 +3,606 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>나의 일정</title>
+  <title>나의 일정 달력</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: Arial, "Malgun Gothic", sans-serif;
-      background: #f4f6f8;
+      background: #f3f5f7;
       color: #222;
     }
 
-    .container {
-      max-width: 900px;
+    .wrap {
+      max-width: 1100px;
       margin: 0 auto;
-      padding: 24px;
+      padding: 24px 16px 40px;
     }
 
-    h1 {
-      margin-bottom: 8px;
-      font-size: 32px;
-    }
-
-    .subtitle {
-      margin-bottom: 24px;
-      color: #666;
-    }
-
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
+    .header {
       margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     }
 
-    h2 {
-      margin-top: 0;
-      margin-bottom: 16px;
-      font-size: 24px;
-      border-left: 6px solid #4a90e2;
-      padding-left: 10px;
-    }
-
-    h3 {
-      margin-top: 20px;
-      margin-bottom: 10px;
-      font-size: 18px;
-      color: #333;
-    }
-
-    ul {
+    .title {
       margin: 0;
-      padding-left: 20px;
-      line-height: 1.8;
+      font-size: 34px;
+      font-weight: 700;
     }
 
-    .weekday-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    .sub {
+      margin-top: 8px;
+      color: #666;
+      font-size: 15px;
+    }
+
+    .calendar-box {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      padding: 20px;
+    }
+
+    .calendar-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       gap: 12px;
-      margin-top: 16px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
     }
 
-    .day-box {
-      background: #f8fafc;
-      border: 1px solid #e3e8ee;
-      border-radius: 10px;
-      padding: 12px;
-    }
-
-    .day-box strong {
-      display: block;
-      margin-bottom: 6px;
+    .month-title {
+      font-size: 26px;
+      font-weight: 700;
       color: #1d4f91;
     }
 
-    .footer {
-      text-align: center;
-      margin-top: 30px;
-      color: #777;
+    .top-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      background: #2f6fdd;
+      color: white;
+      padding: 10px 14px;
       font-size: 14px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #2359b4;
+    }
+
+    .week-header,
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+    }
+
+    .week-header {
+      margin-bottom: 10px;
+    }
+
+    .week-header div {
+      text-align: center;
+      font-weight: 700;
+      padding: 10px 0;
+      color: #444;
+      background: #eef3fb;
+      border-radius: 10px;
+    }
+
+    .week-header .sun {
+      color: #d64040;
+    }
+
+    .week-header .sat {
+      color: #2d63d8;
+    }
+
+    .day-cell {
+      min-height: 120px;
+      background: #fafbfd;
+      border: 1px solid #dfe6ee;
+      border-radius: 12px;
+      padding: 10px;
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .day-cell:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .day-cell.empty {
+      background: #f1f3f5;
+      cursor: default;
+    }
+
+    .day-cell.empty:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .day-number {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 8px;
+    }
+
+    .sun-text {
+      color: #d64040;
+    }
+
+    .sat-text {
+      color: #2d63d8;
+    }
+
+    .today {
+      border: 2px solid #2f6fdd;
+      background: #f5f9ff;
+    }
+
+    .event-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow: hidden;
+    }
+
+    .event-item {
+      background: #e8f0ff;
+      color: #1c4587;
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 13px;
+      line-height: 1.3;
+      word-break: break-word;
+    }
+
+    .guide {
+      margin-top: 18px;
+      color: #666;
+      font-size: 14px;
+    }
+
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-bg.show {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 460px;
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+    }
+
+    .modal h2 {
+      margin: 0 0 10px;
+      font-size: 22px;
+    }
+
+    .selected-date {
+      color: #1d4f91;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .input-row input {
+      flex: 1;
+      height: 42px;
+      border: 1px solid #cfd8e3;
+      border-radius: 10px;
+      padding: 0 12px;
+      font-size: 14px;
+    }
+
+    .saved-list {
+      max-height: 180px;
+      overflow-y: auto;
+      border: 1px solid #e4e8ee;
+      border-radius: 10px;
+      padding: 10px;
+      background: #fafbfd;
+      margin-bottom: 14px;
+    }
+
+    .saved-empty {
+      color: #888;
+      font-size: 14px;
+    }
+
+    .saved-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      background: white;
+      border: 1px solid #e1e7ef;
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+    }
+
+    .saved-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .saved-text {
+      font-size: 14px;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .delete-btn {
+      background: #e14d4d;
+      padding: 8px 10px;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .delete-btn:hover {
+      background: #bf3e3e;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .secondary-btn {
+      background: #8a94a3;
+    }
+
+    .secondary-btn:hover {
+      background: #707987;
+    }
+
+    @media (max-width: 900px) {
+      .week-header,
+      .calendar-grid {
+        gap: 6px;
+      }
+
+      .day-cell {
+        min-height: 100px;
+        padding: 8px;
+      }
+
+      .event-item {
+        font-size: 12px;
+        padding: 5px 6px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .title {
+        font-size: 28px;
+      }
+
+      .month-title {
+        font-size: 22px;
+      }
+
+      .week-header div {
+        font-size: 12px;
+        padding: 8px 0;
+      }
+
+      .day-number {
+        font-size: 13px;
+      }
+
+      .day-cell {
+        min-height: 88px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>나의 일정</h1>
-    <p class="subtitle">부 프로젝트용 간단 일정 페이지</p>
+  <div class="wrap">
+    <div class="header">
+      <h1 class="title">나의 일정 달력</h1>
+      <div class="sub">날짜를 클릭해서 일정을 입력하고 저장해보세요.</div>
+    </div>
 
-    <div class="card">
-      <h2>평일 공통 시간표</h2>
-      <ul>
-        <li>19:00 ~ 20:00 : 휴식 / 식사</li>
-        <li>20:00 ~ 20:30 : 가벼운 공부 (영상 / 자료 / 정리)</li>
-        <li>20:30 ~ 21:40 : 개발 집중 시간</li>
-        <li>21:40 ~ 22:00 : 정리 + 기록</li>
-        <li>22:00 이후 : 자유 시간</li>
-      </ul>
-
-      <div class="weekday-grid">
-        <div class="day-box">
-          <strong>월요일</strong>
-          엑셀 자동화 공부
-        </div>
-        <div class="day-box">
-          <strong>화요일</strong>
-          안드로이드 앱 개발
-        </div>
-        <div class="day-box">
-          <strong>수요일</strong>
-          자동화 프로젝트
-        </div>
-        <div class="day-box">
-          <strong>목요일</strong>
-          안드로이드 기능 추가
-        </div>
-        <div class="day-box">
-          <strong>금요일</strong>
-          가벼운 공부 / 기술 탐색
+    <div class="calendar-box">
+      <div class="calendar-top">
+        <div class="month-title" id="monthTitle"></div>
+        <div class="top-buttons">
+          <button id="prevBtn">이전 달</button>
+          <button id="todayBtn">이번 달</button>
+          <button id="nextBtn">다음 달</button>
         </div>
       </div>
-    </div>
 
-    <div class="card">
-      <h2>토요일</h2>
-      <ul>
-        <li>10:00 ~ 12:00 : 개인 프로젝트</li>
-        <li>12:00 ~ 14:00 : 휴식</li>
-        <li>14:00 ~ 16:00 : 개발 집중</li>
-        <li>저녁 이후 : 자유 시간</li>
-      </ul>
-    </div>
+      <div class="week-header">
+        <div class="sun">일</div>
+        <div>월</div>
+        <div>화</div>
+        <div>수</div>
+        <div>목</div>
+        <div>금</div>
+        <div class="sat">토</div>
+      </div>
 
-    <div class="card">
-      <h2>일요일</h2>
-      <ul>
-        <li>10:00 ~ 12:00 : 앱 개발</li>
-        <li>12:00 ~ 14:00 : 휴식</li>
-        <li>14:00 ~ 16:00 : 자동화 프로젝트</li>
-        <li>16:00 이후 : 완전 휴식</li>
-      </ul>
-    </div>
+      <div class="calendar-grid" id="calendarGrid"></div>
 
-    <div class="footer">
-      꾸준히만 가도 충분합니다.
+      <div class="guide">
+        팁: 날짜 칸을 누르면 일정 추가/삭제가 가능합니다.
+      </div>
     </div>
   </div>
+
+  <div class="modal-bg" id="modalBg">
+    <div class="modal">
+      <h2>일정 관리</h2>
+      <div class="selected-date" id="selectedDateText"></div>
+
+      <div class="input-row">
+        <input type="text" id="scheduleInput" placeholder="예: 20:00 앱 개발" />
+        <button id="addBtn">추가</button>
+      </div>
+
+      <div class="saved-list" id="savedList"></div>
+
+      <div class="modal-buttons">
+        <button class="secondary-btn" id="closeBtn">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "simple_calendar_events_v1";
+
+    let currentDate = new Date();
+    let selectedDateKey = "";
+    let eventData = loadEvents();
+
+    const monthTitle = document.getElementById("monthTitle");
+    const calendarGrid = document.getElementById("calendarGrid");
+    const prevBtn = document.getElementById("prevBtn");
+    const todayBtn = document.getElementById("todayBtn");
+    const nextBtn = document.getElementById("nextBtn");
+
+    const modalBg = document.getElementById("modalBg");
+    const selectedDateText = document.getElementById("selectedDateText");
+    const scheduleInput = document.getElementById("scheduleInput");
+    const addBtn = document.getElementById("addBtn");
+    const savedList = document.getElementById("savedList");
+    const closeBtn = document.getElementById("closeBtn");
+
+    function loadEvents() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return {};
+      try {
+        return JSON.parse(raw);
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveEvents() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(eventData));
+    }
+
+    function formatDateKey(year, month, day) {
+      const mm = String(month + 1).padStart(2, "0");
+      const dd = String(day).padStart(2, "0");
+      return `${year}-${mm}-${dd}`;
+    }
+
+    function isToday(year, month, day) {
+      const now = new Date();
+      return (
+        now.getFullYear() === year &&
+        now.getMonth() === month &&
+        now.getDate() === day
+      );
+    }
+
+    function renderCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+
+      monthTitle.textContent = `${year}년 ${month + 1}월`;
+      calendarGrid.innerHTML = "";
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const lastDate = new Date(year, month + 1, 0).getDate();
+
+      for (let i = 0; i < firstDay; i++) {
+        const empty = document.createElement("div");
+        empty.className = "day-cell empty";
+        calendarGrid.appendChild(empty);
+      }
+
+      for (let day = 1; day <= lastDate; day++) {
+        const cell = document.createElement("div");
+        cell.className = "day-cell";
+
+        const weekday = new Date(year, month, day).getDay();
+        const key = formatDateKey(year, month, day);
+
+        if (isToday(year, month, day)) {
+          cell.classList.add("today");
+        }
+
+        const dayNumber = document.createElement("div");
+        dayNumber.className = "day-number";
+        if (weekday === 0) dayNumber.classList.add("sun-text");
+        if (weekday === 6) dayNumber.classList.add("sat-text");
+        dayNumber.textContent = day;
+
+        const eventList = document.createElement("div");
+        eventList.className = "event-list";
+
+        const events = eventData[key] || [];
+        events.slice(0, 3).forEach(text => {
+          const item = document.createElement("div");
+          item.className = "event-item";
+          item.textContent = text;
+          eventList.appendChild(item);
+        });
+
+        if (events.length > 3) {
+          const more = document.createElement("div");
+          more.className = "event-item";
+          more.textContent = `외 ${events.length - 3}건`;
+          eventList.appendChild(more);
+        }
+
+        cell.appendChild(dayNumber);
+        cell.appendChild(eventList);
+
+        cell.addEventListener("click", () => openModal(key, year, month, day));
+
+        calendarGrid.appendChild(cell);
+      }
+    }
+
+    function openModal(dateKey, year, month, day) {
+      selectedDateKey = dateKey;
+      selectedDateText.textContent = `${year}년 ${month + 1}월 ${day}일`;
+      scheduleInput.value = "";
+      renderSavedList();
+      modalBg.classList.add("show");
+      scheduleInput.focus();
+    }
+
+    function closeModal() {
+      modalBg.classList.remove("show");
+      selectedDateKey = "";
+    }
+
+    function renderSavedList() {
+      const events = eventData[selectedDateKey] || [];
+      savedList.innerHTML = "";
+
+      if (events.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "saved-empty";
+        empty.textContent = "저장된 일정이 없습니다.";
+        savedList.appendChild(empty);
+        return;
+      }
+
+      events.forEach((text, index) => {
+        const row = document.createElement("div");
+        row.className = "saved-item";
+
+        const textDiv = document.createElement("div");
+        textDiv.className = "saved-text";
+        textDiv.textContent = text;
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "delete-btn";
+        delBtn.textContent = "삭제";
+        delBtn.addEventListener("click", () => {
+          deleteEvent(index);
+        });
+
+        row.appendChild(textDiv);
+        row.appendChild(delBtn);
+        savedList.appendChild(row);
+      });
+    }
+
+    function addEvent() {
+      const text = scheduleInput.value.trim();
+      if (!text) {
+        alert("일정을 입력해주세요.");
+        return;
+      }
+
+      if (!eventData[selectedDateKey]) {
+        eventData[selectedDateKey] = [];
+      }
+
+      eventData[selectedDateKey].push(text);
+      saveEvents();
+      scheduleInput.value = "";
+      renderSavedList();
+      renderCalendar();
+      scheduleInput.focus();
+    }
+
+    function deleteEvent(index) {
+      if (!eventData[selectedDateKey]) return;
+
+      eventData[selectedDateKey].splice(index, 1);
+
+      if (eventData[selectedDateKey].length === 0) {
+        delete eventData[selectedDateKey];
+      }
+
+      saveEvents();
+      renderSavedList();
+      renderCalendar();
+    }
+
+    prevBtn.addEventListener("click", () => {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      renderCalendar();
+    });
+
+    todayBtn.addEventListener("click", () => {
+      currentDate = new Date();
+      renderCalendar();
+    });
+
+    nextBtn.addEventListener("click", () => {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      renderCalendar();
+    });
+
+    addBtn.addEventListener("click", addEvent);
+
+    scheduleInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        addEvent();
+      }
+    });
+
+    closeBtn.addEventListener("click", closeModal);
+
+    modalBg.addEventListener("click", (e) => {
+      if (e.target === modalBg) {
+        closeModal();
+      }
+    });
+
+    renderCalendar();
+  </script>
 </body>
 </html>
