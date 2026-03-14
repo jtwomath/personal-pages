@@ -339,11 +339,14 @@
     <div class="calendar-box">
       <div class="calendar-top">
         <div class="month-title" id="monthTitle"></div>
-        <div class="top-buttons">
-          <button id="prevBtn">이전 달</button>
-          <button id="todayBtn">이번 달</button>
-          <button id="nextBtn">다음 달</button>
-        </div>
+          <div class="top-buttons">
+            <button id="prevBtn">이전 달</button>
+            <button id="todayBtn">이번 달</button>
+            <button id="nextBtn">다음 달</button>
+            <button id="backupBtn">백업</button>
+            <button id="restoreBtn">복구</button>
+            <input type="file" id="restoreFile" accept=".json" style="display:none;" />
+          </div>
       </div>
 
       <div class="week-header">
@@ -394,6 +397,9 @@
     const prevBtn = document.getElementById("prevBtn");
     const todayBtn = document.getElementById("todayBtn");
     const nextBtn = document.getElementById("nextBtn");
+    const backupBtn = document.getElementById("backupBtn");
+    const restoreBtn = document.getElementById("restoreBtn");
+    const restoreFile = document.getElementById("restoreFile");
 
     const modalBg = document.getElementById("modalBg");
     const selectedDateText = document.getElementById("selectedDateText");
@@ -571,6 +577,50 @@
       renderCalendar();
     }
 
+    function backupEvents() {
+      const dataStr = JSON.stringify(eventData, null, 2);
+      const blob = new Blob([dataStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "calendar-backup.json";
+      a.click();
+
+      URL.revokeObjectURL(url);
+    }
+
+    function restoreEvents(file) {
+      if (!file) return;
+
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+
+          if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+            alert("올바른 백업 파일 형식이 아닙니다.");
+            return;
+          }
+
+          eventData = parsed;
+          saveEvents();
+          renderCalendar();
+
+          if (selectedDateKey) {
+            renderSavedList();
+          }
+
+          alert("일정 복구가 완료되었습니다.");
+        } catch (error) {
+          alert("복구에 실패했습니다. JSON 파일을 확인해주세요.");
+        }
+      };
+
+      reader.readAsText(file);
+    }
+
     prevBtn.addEventListener("click", () => {
       currentDate.setMonth(currentDate.getMonth() - 1);
       renderCalendar();
@@ -584,6 +634,18 @@
     nextBtn.addEventListener("click", () => {
       currentDate.setMonth(currentDate.getMonth() + 1);
       renderCalendar();
+    });
+
+    backupBtn.addEventListener("click", backupEvents);
+
+    restoreBtn.addEventListener("click", () => {
+      restoreFile.click();
+    });
+
+    restoreFile.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      restoreEvents(file);
+      restoreFile.value = "";
     });
 
     addBtn.addEventListener("click", addEvent);
