@@ -288,6 +288,73 @@
       background: #707987;
     }
 
+    .routine-wrap {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .today-routine-card,
+    .weekly-routine-card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      padding: 20px;
+    }
+
+    .section-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: #2f6fdd;
+      margin-bottom: 10px;
+    }
+
+    .today-routine-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1d4f91;
+      margin-bottom: 8px;
+    }
+
+    .today-routine-text {
+      font-size: 16px;
+      color: #333;
+      line-height: 1.6;
+      background: #f5f9ff;
+      border: 1px solid #d9e6ff;
+      border-radius: 12px;
+      padding: 14px 16px;
+      min-height: 52px;
+    }
+
+    .routine-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+    }
+
+    .routine-item {
+      background: #f8fafc;
+      border: 1px solid #e1e7ef;
+      border-radius: 12px;
+      padding: 14px 12px;
+    }
+
+    .routine-day {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #1d4f91;
+    }
+
+    .routine-text {
+      font-size: 14px;
+      line-height: 1.5;
+      color: #333;
+      word-break: keep-all;
+    }
+
     @media (max-width: 900px) {
       .week-header,
       .calendar-grid {
@@ -302,6 +369,10 @@
       .event-item {
         font-size: 12px;
         padding: 5px 6px;
+      }
+
+      .routine-grid {
+        grid-template-columns: repeat(3, 1fr);
       }
     }
 
@@ -326,6 +397,18 @@
       .day-cell {
         min-height: 88px;
       }
+
+      .routine-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .today-routine-title {
+        font-size: 20px;
+      }
+
+      .today-routine-text {
+        font-size: 14px;
+      }
     }
   </style>
 </head>
@@ -334,6 +417,19 @@
     <div class="header">
       <h1 class="title">나의 일정 달력</h1>
       <div class="sub">날짜를 클릭해서 일정을 입력하고 저장해보세요.</div>
+    </div>
+
+    <div class="routine-wrap">
+      <div class="today-routine-card">
+        <div class="section-label">오늘 루틴</div>
+        <div class="today-routine-title" id="todayRoutineTitle"></div>
+        <div class="today-routine-text" id="todayRoutineText"></div>
+      </div>
+
+      <div class="weekly-routine-card">
+        <div class="section-label">요일별 고정 루틴</div>
+        <div class="routine-grid" id="routineGrid"></div>
+      </div>
     </div>
 
     <div class="calendar-box">
@@ -392,8 +488,21 @@
     let selectedDateKey = "";
     let eventData = loadEvents();
 
+    const weeklyRoutine = [
+      { dayName: "일요일", text: "앱 개발 / 자동화 프로젝트 / 휴식" },
+      { dayName: "월요일", text: "엑셀 자동화 공부" },
+      { dayName: "화요일", text: "안드로이드 앱 개발" },
+      { dayName: "수요일", text: "자동화 프로젝트" },
+      { dayName: "목요일", text: "안드로이드 기능 추가" },
+      { dayName: "금요일", text: "가벼운 공부 / 기술 탐색" },
+      { dayName: "토요일", text: "개인 프로젝트 / 개발 집중" }
+    ];
+
     const monthTitle = document.getElementById("monthTitle");
     const calendarGrid = document.getElementById("calendarGrid");
+    const todayRoutineTitle = document.getElementById("todayRoutineTitle");
+    const todayRoutineText = document.getElementById("todayRoutineText");
+    const routineGrid = document.getElementById("routineGrid");
     const prevBtn = document.getElementById("prevBtn");
     const todayBtn = document.getElementById("todayBtn");
     const nextBtn = document.getElementById("nextBtn");
@@ -577,6 +686,36 @@
       renderCalendar();
     }
 
+    function renderWeeklyRoutine() {
+      routineGrid.innerHTML = "";
+
+      weeklyRoutine.forEach(item => {
+        const box = document.createElement("div");
+        box.className = "routine-item";
+
+        const day = document.createElement("div");
+        day.className = "routine-day";
+        day.textContent = item.dayName;
+
+        const text = document.createElement("div");
+        text.className = "routine-text";
+        text.textContent = item.text;
+
+        box.appendChild(day);
+        box.appendChild(text);
+        routineGrid.appendChild(box);
+      });
+    }
+
+    function renderTodayRoutine() {
+      const now = new Date();
+      const dayIndex = now.getDay();
+      const todayInfo = weeklyRoutine[dayIndex];
+
+      todayRoutineTitle.textContent = `${todayInfo.dayName} 루틴`;
+      todayRoutineText.textContent = todayInfo.text;
+    }
+
     function backupEvents() {
       const dataStr = JSON.stringify(eventData, null, 2);
       const blob = new Blob([dataStr], { type: "application/json" });
@@ -606,6 +745,8 @@
 
           eventData = parsed;
           saveEvents();
+          renderTodayRoutine();
+          renderWeeklyRoutine();
           renderCalendar();
 
           if (selectedDateKey) {
