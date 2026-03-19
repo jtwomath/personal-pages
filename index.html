@@ -355,6 +355,23 @@
       word-break: keep-all;
     }
 
+    .menu-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: #4caf50;
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .menu-link:hover {
+      background: #3f9443;
+    }
+
     @media (max-width: 900px) {
       .week-header,
       .calendar-grid {
@@ -440,12 +457,11 @@
             <button id="todayBtn">이번 달</button>
             <button id="nextBtn">다음 달</button>
 
-            <a href="notes.html">
-              <button style="background:#4caf50;">운영 메모</button>
-            </a>
+            <a href="notes.html" class="menu-link">운영 메모</a>
 
             <button id="backupBtn">백업</button>
             <button id="restoreBtn">복구</button>
+            <input type="file" id="restoreFile" accept=".json" style="display:none;" />
           </div>
       </div>
 
