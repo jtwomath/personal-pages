@@ -372,6 +372,42 @@
       background: #3f9443;
     }
 
+    .button-gap {
+      width: 16px;
+    }
+
+    .memo-panel-card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+
+    .memo-panel-text {
+      font-size: 15px;
+      line-height: 1.8;
+      color: #333;
+      margin-bottom: 14px;
+    }
+
+    .memo-panel-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: #4caf50;
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .memo-panel-link:hover {
+      background: #3f9443;
+    }
+
     @media (max-width: 900px) {
       .week-header,
       .calendar-grid {
@@ -449,6 +485,16 @@
       </div>
     </div>
 
+    <div class="memo-panel-card">
+      <div class="section-label">운영 메모</div>
+      <div class="memo-panel-text">
+        • 첫 문의: 현재 파일 / 작업 흐름 / 결과 형태 확인<br>
+        • 가격 문의: 파일 예시 있으면 더 정확히 안내<br>
+        • 핵심 원칙: 길게 쓰지 않기 / 같은 톤 유지 / 흔들리지 않기
+      </div>
+      <a href="notes.html" class="memo-panel-link">전체 운영 메모 보기</a>
+    </div>
+
     <div class="calendar-box">
       <div class="calendar-top">
         <div class="month-title" id="monthTitle"></div>
@@ -456,6 +502,8 @@
             <button id="prevBtn">이전 달</button>
             <button id="todayBtn">이번 달</button>
             <button id="nextBtn">다음 달</button>
+
+            <div class="button-gap"></div>
 
             <button id="backupBtn">백업</button>
             <button id="restoreBtn">복구</button>
