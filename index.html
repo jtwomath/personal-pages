@@ -457,8 +457,6 @@
             <button id="todayBtn">이번 달</button>
             <button id="nextBtn">다음 달</button>
 
-            <a href="notes.html" class="menu-link">운영 메모</a>
-
             <button id="backupBtn">백업</button>
             <button id="restoreBtn">복구</button>
             <input type="file" id="restoreFile" accept=".json" style="display:none;" />
@@ -734,6 +732,9 @@
       const todayInfo = weeklyRoutine[dayIndex];
 
       todayRoutineTitle.textContent = `${todayInfo.dayName} 루틴`;
+
+      <a href="notes.html" class="menu-link">운영 메모</a>
+
       todayRoutineText.textContent = todayInfo.text;
     }
 
