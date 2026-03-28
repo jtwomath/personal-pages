@@ -469,7 +469,7 @@
   <div class="wrap">
     <div class="header">
       <h1 class="title">나의 일정 달력</h1>
-      <div class="sub">날짜를 클릭해서 일정을 입력하고 저장해보세요.</div>
+      <div class="sub">4월 목표는 완성이 아니라 누적입니다. 하루 하나라도 하면 성공입니다.</div>
     </div>
 
     <div class="routine-wrap">
@@ -488,9 +488,12 @@
     <div class="memo-panel-card">
       <div class="section-label">운영 메모</div>
       <div class="memo-panel-text">
-        • 첫 문의: 현재 파일 / 작업 흐름 / 결과 형태 확인<br>
-        • 가격 문의: 파일 예시 있으면 더 정확히 안내<br>
-        • 핵심 원칙: 길게 쓰지 않기 / 같은 톤 유지 / 흔들리지 않기
+        • 4월 목표: 완성이 아니라 누적<br>
+        • 중심 축: 엑셀 템플릿 = 메인 수익 루트<br>
+        • 서브 축: 앱 = 가능성 / 자동화 = 확장 / 웹 = 미래<br>
+        • 평일: 2시간이라도 무조건 실행<br>
+        • 주말: 오전 / 오후 분리해서 집중<br>
+        • 절대 규칙: 하루 하나라도 하면 성공
       </div>
       <a href="notes.html" class="memo-panel-link">전체 운영 메모 보기</a>
     </div>
@@ -554,15 +557,36 @@
     let selectedDateKey = "";
     let eventData = loadEvents();
 
-    const weeklyRoutine = [
-      { dayName: "일요일", text: "앱 개발 / 자동화 프로젝트 / 휴식" },
-      { dayName: "월요일", text: "엑셀 자동화 공부" },
-      { dayName: "화요일", text: "안드로이드 앱 개발" },
-      { dayName: "수요일", text: "자동화 프로젝트" },
-      { dayName: "목요일", text: "안드로이드 기능 추가" },
-      { dayName: "금요일", text: "가벼운 공부 / 기술 탐색" },
-      { dayName: "토요일", text: "개인 프로젝트 / 개발 집중" }
-    ];
+  const weeklyRoutine = [
+    { 
+      dayName: "일요일", 
+      text: "오전: 한 주 복습 / 문제 체크 | 오후: 웹·SaaS 공부 또는 C# 무료 프로젝트 또는 휴식" 
+    },
+    { 
+      dayName: "월요일", 
+      text: "엑셀 자동화 (기술 축적) | SUMIFS / XLOOKUP 실전 적용 | 템플릿 기능 1개 개선" 
+    },
+    { 
+      dayName: "화요일", 
+      text: "안드로이드 앱 (PhotoCleaner) | 버그 수정 | UI 간단 개선 | 테스트 10~50장" 
+    },
+    { 
+      dayName: "수요일", 
+      text: "자동화 프로젝트 (수익 연결) | CSV → DB 자동화 | 파일 처리 구조 개선 | 상품화 기능 추가" 
+    },
+    { 
+      dayName: "목요일", 
+      text: "앱 기능 추가 (완성도 상승) | OCR 보완 또는 필터 기능 | 예외 처리 추가" 
+    },
+    { 
+      dayName: "금요일", 
+      text: "가벼운 날 | 블로그 글 1개 | 기술 정리 | 크몽 서비스 문구 수정" 
+    },
+    { 
+      dayName: "토요일", 
+      text: "오전: 엑셀 템플릿 구조 설계 / KPI / 피벗 | 오후: 블로그 / 크몽 / 이미지 / 설명 정리" 
+    }
+  ];
 
     const monthTitle = document.getElementById("monthTitle");
     const calendarGrid = document.getElementById("calendarGrid");
@@ -780,7 +804,7 @@
       const todayInfo = weeklyRoutine[dayIndex];
 
       todayRoutineTitle.textContent = `${todayInfo.dayName} 루틴`;
-      todayRoutineText.textContent = todayInfo.text;
+      todayRoutineText.innerHTML = todayInfo.text.replaceAll(" | ", "<br>");
     }
 
     function backupEvents() {
