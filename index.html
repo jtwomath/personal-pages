@@ -355,23 +355,6 @@
       word-break: keep-all;
     }
 
-    .menu-link {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 10px 14px;
-      border-radius: 10px;
-      background: #4caf50;
-      color: white;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .menu-link:hover {
-      background: #3f9443;
-    }
-
     .button-gap {
       width: 16px;
     }
@@ -465,11 +448,12 @@
     }
   </style>
 </head>
+
 <body>
   <div class="wrap">
     <div class="header">
       <h1 class="title">나의 일정 달력</h1>
-      <div class="sub">4월 목표는 완성이 아니라 누적입니다. 하루 하나라도 하면 성공입니다.</div>
+      <div class="sub">5월 목표는 많이 하는 것이 아니라 끊기지 않는 것입니다. 하루 1개만 해도 성공입니다.</div>
     </div>
 
     <div class="routine-wrap">
@@ -486,14 +470,14 @@
     </div>
 
     <div class="memo-panel-card">
-      <div class="section-label">운영 메모</div>
+      <div class="section-label">5월 운영 메모</div>
       <div class="memo-panel-text">
-        • 4월 목표: 완성이 아니라 누적<br>
-        • 중심 축: 엑셀 템플릿 = 메인 수익 루트<br>
-        • 서브 축: 앱 = 가능성 / 자동화 = 확장 / 웹 = 미래<br>
-        • 평일: 2시간이라도 무조건 실행<br>
-        • 주말: 오전 / 오후 분리해서 집중<br>
-        • 절대 규칙: 하루 하나라도 하면 성공
+        • 목표: 크몽 서비스 3~5개 / 블로그 글 +6~8개 / 첫 추가 문의 발생<br>
+        • 평일: 30~60분만 작업<br>
+        • 주말: 2~3시간 집중 작업<br>
+        • 절대 규칙: 하루 1개 작업만 진행, 2개 이상 금지<br>
+        • 기준: 완벽보다 지속<br>
+        • 무기력 방지: 못 하면 줄이고, 늘리지 않기
       </div>
       <a href="notes.html" class="memo-panel-link">전체 운영 메모 보기</a>
     </div>
@@ -501,17 +485,17 @@
     <div class="calendar-box">
       <div class="calendar-top">
         <div class="month-title" id="monthTitle"></div>
-          <div class="top-buttons">
-            <button id="prevBtn">이전 달</button>
-            <button id="todayBtn">이번 달</button>
-            <button id="nextBtn">다음 달</button>
+        <div class="top-buttons">
+          <button id="prevBtn">이전 달</button>
+          <button id="todayBtn">이번 달</button>
+          <button id="nextBtn">다음 달</button>
 
-            <div class="button-gap"></div>
+          <div class="button-gap"></div>
 
-            <button id="backupBtn">백업</button>
-            <button id="restoreBtn">복구</button>
-            <input type="file" id="restoreFile" accept=".json" style="display:none;" />
-          </div>
+          <button id="backupBtn">백업</button>
+          <button id="restoreBtn">복구</button>
+          <input type="file" id="restoreFile" accept=".json" style="display:none;" />
+        </div>
       </div>
 
       <div class="week-header">
@@ -538,7 +522,7 @@
       <div class="selected-date" id="selectedDateText"></div>
 
       <div class="input-row">
-        <input type="text" id="scheduleInput" placeholder="예: 20:00 앱 개발" />
+        <input type="text" id="scheduleInput" placeholder="예: 블로그 글 초안 작성" />
         <button id="addBtn">추가</button>
       </div>
 
@@ -557,36 +541,36 @@
     let selectedDateKey = "";
     let eventData = loadEvents();
 
-  const weeklyRoutine = [
-    { 
-      dayName: "일요일", 
-      text: "오전: 한 주 복습 / 문제 체크 | 오후: 웹·SaaS 공부 또는 C# 무료 프로젝트 또는 휴식" 
-    },
-    { 
-      dayName: "월요일", 
-      text: "엑셀 자동화 (기술 축적) | SUMIFS / XLOOKUP 실전 적용 | 템플릿 기능 1개 개선" 
-    },
-    { 
-      dayName: "화요일", 
-      text: "안드로이드 앱 (PhotoCleaner) | 버그 수정 | UI 간단 개선 | 테스트 10~50장" 
-    },
-    { 
-      dayName: "수요일", 
-      text: "자동화 프로젝트 (수익 연결) | CSV → DB 자동화 | 파일 처리 구조 개선 | 상품화 기능 추가" 
-    },
-    { 
-      dayName: "목요일", 
-      text: "앱 기능 추가 (완성도 상승) | OCR 보완 또는 필터 기능 | 예외 처리 추가" 
-    },
-    { 
-      dayName: "금요일", 
-      text: "가벼운 날 | 블로그 글 1개 | 기술 정리 | 크몽 서비스 문구 수정" 
-    },
-    { 
-      dayName: "토요일", 
-      text: "오전: 엑셀 템플릿 구조 설계 / KPI / 피벗 | 오후: 블로그 / 크몽 / 이미지 / 설명 정리" 
-    }
-  ];
+    const weeklyRoutine = [
+      {
+        dayName: "일요일",
+        text: "복습 / 정리 | 한 주 작업 정리 | 문제 있었던 부분만 체크 | 오후는 선택 또는 휴식"
+      },
+      {
+        dayName: "월요일",
+        text: "가벼운 수정 | 썸네일 문구 수정 | 서비스 설명 일부 수정 | 30~60분만 진행"
+      },
+      {
+        dayName: "화요일",
+        text: "블로그 / 서비스 연결 | 블로그 글 초안 또는 기존 글에 서비스 링크 연결 | 하루 1개만"
+      },
+      {
+        dayName: "수요일",
+        text: "서비스 보완 | 기존 서비스 문구 정리 | 반응 있는 서비스만 개선"
+      },
+      {
+        dayName: "목요일",
+        text: "아이디어 정리 | 신규 서비스 후보 정리 | 엑셀 자동화 / PDF 자동화 / 자동 집계 검토"
+      },
+      {
+        dayName: "금요일",
+        text: "가벼운 날 | 조회 / 문의 확인 | 기술 정리 | 무리하지 않기"
+      },
+      {
+        dayName: "토요일",
+        text: "집중 작업 | 서비스 1개 제작 또는 개선 | 썸네일 제작 | 전체 구조 점검"
+      }
+    ];
 
     const monthTitle = document.getElementById("monthTitle");
     const calendarGrid = document.getElementById("calendarGrid");
@@ -594,6 +578,7 @@
     const todayRoutineTitle = document.getElementById("todayRoutineTitle");
     const todayRoutineText = document.getElementById("todayRoutineText");
     const routineGrid = document.getElementById("routineGrid");
+
     const prevBtn = document.getElementById("prevBtn");
     const todayBtn = document.getElementById("todayBtn");
     const nextBtn = document.getElementById("nextBtn");
