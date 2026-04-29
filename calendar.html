@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>나의 일정 달력</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, "Malgun Gothic", sans-serif;
+      background: #f3f5f7;
+      color: #222;
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+
+    .header {
+      margin-bottom: 20px;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 34px;
+      font-weight: 700;
+    }
+
+    .sub {
+      margin-top: 8px;
+      color: #666;
+      font-size: 15px;
+    }
+
+    .calendar-box {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      padding: 20px;
+    }
+
+    .calendar-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .month-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: #1d4f91;
+    }
+
+    .top-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      background: #2f6fdd;
+      color: white;
+      padding: 10px 14px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #2359b4;
+    }
+
+    .week-header,
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+    }
+
+    .week-header {
+      margin-bottom: 10px;
+    }
+
+    .week-header div {
+      text-align: center;
+      font-weight: 700;
+      padding: 10px 0;
+      color: #444;
+      background: #eef3fb;
+      border-radius: 10px;
+    }
+
+    .week-header .sun {
+      color: #d64040;
+    }
+
+    .week-header .sat {
+      color: #2d63d8;
+    }
+
+    .day-cell {
+      min-height: 120px;
+      background: #fafbfd;
+      border: 1px solid #dfe6ee;
+      border-radius: 12px;
+      padding: 10px;
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .day-cell:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .day-cell.empty {
+      background: #f1f3f5;
+      cursor: default;
+    }
+
+    .day-cell.empty:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .day-number {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 8px;
+    }
+
+    .sun-text {
+      color: #d64040;
+    }
+
+    .sat-text {
+      color: #2d63d8;
+    }
+
+    .today {
+      border: 2px solid #2f6fdd;
+      background: #f5f9ff;
+    }
+
+    .event-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow: hidden;
+    }
+
+    .event-item {
+      background: #e8f0ff;
+      color: #1c4587;
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 13px;
+      line-height: 1.3;
+      word-break: break-word;
+    }
+
+    .guide {
+      margin-top: 18px;
+      color: #666;
+      font-size: 14px;
+    }
+
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-bg.show {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 460px;
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+    }
+
+    .modal h2 {
+      margin: 0 0 10px;
+      font-size: 22px;
+    }
+
+    .selected-date {
+      color: #1d4f91;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .input-row input {
+      flex: 1;
+      height: 42px;
+      border: 1px solid #cfd8e3;
+      border-radius: 10px;
+      padding: 0 12px;
+      font-size: 14px;
+    }
+
+    .saved-list {
+      max-height: 180px;
+      overflow-y: auto;
+      border: 1px solid #e4e8ee;
+      border-radius: 10px;
+      padding: 10px;
+      background: #fafbfd;
+      margin-bottom: 14px;
+    }
+
+    .saved-empty {
+      color: #888;
+      font-size: 14px;
+    }
+
+    .saved-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      background: white;
+      border: 1px solid #e1e7ef;
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+    }
+
+    .saved-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .saved-text {
+      font-size: 14px;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .delete-btn {
+      background: #e14d4d;
+      padding: 8px 10px;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .delete-btn:hover {
+      background: #bf3e3e;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .secondary-btn {
+      background: #8a94a3;
+    }
+
+    .secondary-btn:hover {
+      background: #707987;
+    }
+
+    .routine-wrap {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .today-routine-card,
+    .weekly-routine-card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      padding: 20px;
+    }
+
+    .section-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: #2f6fdd;
+      margin-bottom: 10px;
+    }
+
+    .today-routine-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1d4f91;
+      margin-bottom: 8px;
+    }
+
+    .today-routine-text {
+      font-size: 16px;
+      color: #333;
+      line-height: 1.6;
+      background: #f5f9ff;
+      border: 1px solid #d9e6ff;
+      border-radius: 12px;
+      padding: 14px 16px;
+      min-height: 52px;
+    }
+
+    .routine-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+    }
+
+    .routine-item {
+      background: #f8fafc;
+      border: 1px solid #e1e7ef;
+      border-radius: 12px;
+      padding: 14px 12px;
+    }
+
+    .routine-day {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #1d4f91;
+    }
+
+    .routine-text {
+      font-size: 14px;
+      line-height: 1.5;
+      color: #333;
+      word-break: keep-all;
+    }
+
+    .button-gap {
+      width: 16px;
+    }
+
+    .memo-panel-card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+
+    .memo-panel-text {
+      font-size: 15px;
+      line-height: 1.8;
+      color: #333;
+      margin-bottom: 14px;
+    }
+
+    .memo-panel-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: #4caf50;
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .memo-panel-link:hover {
+      background: #3f9443;
+    }
+
+    @media (max-width: 900px) {
+      .week-header,
+      .calendar-grid {
+        gap: 6px;
+      }
+
+      .day-cell {
+        min-height: 100px;
+        padding: 8px;
+      }
+
+      .event-item {
+        font-size: 12px;
+        padding: 5px 6px;
+      }
+
+      .routine-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .title {
+        font-size: 28px;
+      }
+
+      .month-title {
+        font-size: 22px;
+      }
+
+      .week-header div {
+        font-size: 12px;
+        padding: 8px 0;
+      }
+
+      .day-number {
+        font-size: 13px;
+      }
+
+      .day-cell {
+        min-height: 88px;
+      }
+
+      .routine-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .today-routine-title {
+        font-size: 20px;
+      }
+
+      .today-routine-text {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="header">
+      <h1 class="title">나의 일정 달력</h1>
+      <div class="sub">5월 목표는 많이 하는 것이 아니라 끊기지 않는 것입니다. 하루 1개만 해도 성공입니다.</div>
+    </div>
+
+    <div class="routine-wrap">
+      <div class="today-routine-card">
+        <div class="section-label">오늘 루틴</div>
+        <div class="today-routine-title" id="todayRoutineTitle"></div>
+        <div class="today-routine-text" id="todayRoutineText"></div>
+      </div>
+
+      <div class="weekly-routine-card">
+        <div class="section-label">요일별 고정 루틴</div>
+        <div class="routine-grid" id="routineGrid"></div>
+      </div>
+    </div>
+
+    <div class="memo-panel-card">
+      <div class="section-label">5월 운영 메모</div>
+      <div class="memo-panel-text">
+        • 목표: 크몽 서비스 3~5개 / 블로그 글 +6~8개 / 첫 추가 문의 발생<br>
+        • 평일: 30~60분만 작업<br>
+        • 주말: 2~3시간 집중 작업<br>
+        • 절대 규칙: 하루 1개 작업만 진행, 2개 이상 금지<br>
+        • 기준: 완벽보다 지속<br>
+        • 무기력 방지: 못 하면 줄이고, 늘리지 않기
+      </div>
+      <a href="notes.html" class="memo-panel-link">전체 운영 메모 보기</a>
+    </div>
+
+    <div class="calendar-box">
+      <div class="calendar-top">
+        <div class="month-title" id="monthTitle"></div>
+        <div class="top-buttons">
+          <button id="prevBtn">이전 달</button>
+          <button id="todayBtn">이번 달</button>
+          <button id="nextBtn">다음 달</button>
+
+          <div class="button-gap"></div>
+
+          <button id="backupBtn">백업</button>
+          <button id="restoreBtn">복구</button>
+          <input type="file" id="restoreFile" accept=".json" style="display:none;" />
+        </div>
+      </div>
+
+      <div class="week-header">
+        <div class="sun">일</div>
+        <div>월</div>
+        <div>화</div>
+        <div>수</div>
+        <div>목</div>
+        <div>금</div>
+        <div class="sat">토</div>
+      </div>
+
+      <div class="calendar-grid" id="calendarGrid"></div>
+
+      <div class="guide">
+        팁: 날짜 칸을 누르면 일정 추가/삭제가 가능합니다.
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-bg" id="modalBg">
+    <div class="modal">
+      <h2>일정 관리</h2>
+      <div class="selected-date" id="selectedDateText"></div>
+
+      <div class="input-row">
+        <input type="text" id="scheduleInput" placeholder="예: 블로그 글 초안 작성" />
+        <button id="addBtn">추가</button>
+      </div>
+
+      <div class="saved-list" id="savedList"></div>
+
+      <div class="modal-buttons">
+        <button class="secondary-btn" id="closeBtn">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "simple_calendar_events_v1";
+
+    let currentDate = new Date();
+    let selectedDateKey = "";
+    let eventData = loadEvents();
+
+    const weeklyRoutine = [
+      {
+        dayName: "일요일",
+        text: "복습 / 정리 | 한 주 작업 정리 | 문제 있었던 부분만 체크 | 오후는 선택 또는 휴식"
+      },
+      {
+        dayName: "월요일",
+        text: "가벼운 수정 | 썸네일 문구 수정 | 서비스 설명 일부 수정 | 30~60분만 진행"
+      },
+      {
+        dayName: "화요일",
+        text: "블로그 / 서비스 연결 | 블로그 글 초안 또는 기존 글에 서비스 링크 연결 | 하루 1개만"
+      },
+      {
+        dayName: "수요일",
+        text: "서비스 보완 | 기존 서비스 문구 정리 | 반응 있는 서비스만 개선"
+      },
+      {
+        dayName: "목요일",
+        text: "아이디어 정리 | 신규 서비스 후보 정리 | 엑셀 자동화 / PDF 자동화 / 자동 집계 검토"
+      },
+      {
+        dayName: "금요일",
+        text: "가벼운 날 | 조회 / 문의 확인 | 기술 정리 | 무리하지 않기"
+      },
+      {
+        dayName: "토요일",
+        text: "집중 작업 | 서비스 1개 제작 또는 개선 | 썸네일 제작 | 전체 구조 점검"
+      }
+    ];
+
+    const monthTitle = document.getElementById("monthTitle");
+    const calendarGrid = document.getElementById("calendarGrid");
+
+    const todayRoutineTitle = document.getElementById("todayRoutineTitle");
+    const todayRoutineText = document.getElementById("todayRoutineText");
+    const routineGrid = document.getElementById("routineGrid");
+
+    const prevBtn = document.getElementById("prevBtn");
+    const todayBtn = document.getElementById("todayBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const backupBtn = document.getElementById("backupBtn");
+    const restoreBtn = document.getElementById("restoreBtn");
+    const restoreFile = document.getElementById("restoreFile");
+
+    const modalBg = document.getElementById("modalBg");
+    const selectedDateText = document.getElementById("selectedDateText");
+    const scheduleInput = document.getElementById("scheduleInput");
+    const addBtn = document.getElementById("addBtn");
+    const savedList = document.getElementById("savedList");
+    const closeBtn = document.getElementById("closeBtn");
+
+    function loadEvents() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return {};
+      try {
+        return JSON.parse(raw);
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveEvents() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(eventData));
+    }
+
+    function formatDateKey(year, month, day) {
+      const mm = String(month + 1).padStart(2, "0");
+      const dd = String(day).padStart(2, "0");
+      return `${year}-${mm}-${dd}`;
+    }
+
+    function isToday(year, month, day) {
+      const now = new Date();
+      return (
+        now.getFullYear() === year &&
+        now.getMonth() === month &&
+        now.getDate() === day
+      );
+    }
+
+    function renderCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+
+      monthTitle.textContent = `${year}년 ${month + 1}월`;
+      calendarGrid.innerHTML = "";
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const lastDate = new Date(year, month + 1, 0).getDate();
+
+      for (let i = 0; i < firstDay; i++) {
+        const empty = document.createElement("div");
+        empty.className = "day-cell empty";
+        calendarGrid.appendChild(empty);
+      }
+
+      for (let day = 1; day <= lastDate; day++) {
+        const cell = document.createElement("div");
+        cell.className = "day-cell";
+
+        const weekday = new Date(year, month, day).getDay();
+        const key = formatDateKey(year, month, day);
+
+        if (isToday(year, month, day)) {
+          cell.classList.add("today");
+        }
+
+        const dayNumber = document.createElement("div");
+        dayNumber.className = "day-number";
+        if (weekday === 0) dayNumber.classList.add("sun-text");
+        if (weekday === 6) dayNumber.classList.add("sat-text");
+        dayNumber.textContent = day;
+
+        const eventList = document.createElement("div");
+        eventList.className = "event-list";
+
+        const events = eventData[key] || [];
+        events.slice(0, 3).forEach(text => {
+          const item = document.createElement("div");
+          item.className = "event-item";
+          item.textContent = text;
+          eventList.appendChild(item);
+        });
+
+        if (events.length > 3) {
+          const more = document.createElement("div");
+          more.className = "event-item";
+          more.textContent = `외 ${events.length - 3}건`;
+          eventList.appendChild(more);
+        }
+
+        cell.appendChild(dayNumber);
+        cell.appendChild(eventList);
+
+        cell.addEventListener("click", () => openModal(key, year, month, day));
+
+        calendarGrid.appendChild(cell);
+      }
+    }
+
+    function openModal(dateKey, year, month, day) {
+      selectedDateKey = dateKey;
+      selectedDateText.textContent = `${year}년 ${month + 1}월 ${day}일`;
+      scheduleInput.value = "";
+      renderSavedList();
+      modalBg.classList.add("show");
+      scheduleInput.focus();
+    }
+
+    function closeModal() {
+      modalBg.classList.remove("show");
+      selectedDateKey = "";
+    }
+
+    function renderSavedList() {
+      const events = eventData[selectedDateKey] || [];
+      savedList.innerHTML = "";
+
+      if (events.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "saved-empty";
+        empty.textContent = "저장된 일정이 없습니다.";
+        savedList.appendChild(empty);
+        return;
+      }
+
+      events.forEach((text, index) => {
+        const row = document.createElement("div");
+        row.className = "saved-item";
+
+        const textDiv = document.createElement("div");
+        textDiv.className = "saved-text";
+        textDiv.textContent = text;
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "delete-btn";
+        delBtn.textContent = "삭제";
+        delBtn.addEventListener("click", () => {
+          deleteEvent(index);
+        });
+
+        row.appendChild(textDiv);
+        row.appendChild(delBtn);
+        savedList.appendChild(row);
+      });
+    }
+
+    function addEvent() {
+      const text = scheduleInput.value.trim();
+      if (!text) {
+        alert("일정을 입력해주세요.");
+        return;
+      }
+
+      if (!eventData[selectedDateKey]) {
+        eventData[selectedDateKey] = [];
+      }
+
+      eventData[selectedDateKey].push(text);
+      saveEvents();
+      scheduleInput.value = "";
+      renderSavedList();
+      renderCalendar();
+      scheduleInput.focus();
+    }
+
+    function deleteEvent(index) {
+      if (!eventData[selectedDateKey]) return;
+
+      eventData[selectedDateKey].splice(index, 1);
+
+      if (eventData[selectedDateKey].length === 0) {
+        delete eventData[selectedDateKey];
+      }
+
+      saveEvents();
+      renderSavedList();
+      renderCalendar();
+    }
+
+    function renderWeeklyRoutine() {
+      routineGrid.innerHTML = "";
+
+      weeklyRoutine.forEach(item => {
+        const box = document.createElement("div");
+        box.className = "routine-item";
+
+        const day = document.createElement("div");
+        day.className = "routine-day";
+        day.textContent = item.dayName;
+
+        const text = document.createElement("div");
+        text.className = "routine-text";
+        text.textContent = item.text;
+
+        box.appendChild(day);
+        box.appendChild(text);
+        routineGrid.appendChild(box);
+      });
+    }
+
+    function renderTodayRoutine() {
+      const now = new Date();
+      const dayIndex = now.getDay();
+      const todayInfo = weeklyRoutine[dayIndex];
+
+      todayRoutineTitle.textContent = `${todayInfo.dayName} 루틴`;
+      todayRoutineText.innerHTML = todayInfo.text.replaceAll(" | ", "<br>");
+    }
+
+    function backupEvents() {
+      const dataStr = JSON.stringify(eventData, null, 2);
+      const blob = new Blob([dataStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "calendar-backup.json";
+      a.click();
+
+      URL.revokeObjectURL(url);
+    }
+
+    function restoreEvents(file) {
+      if (!file) return;
+
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+
+          if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+            alert("올바른 백업 파일 형식이 아닙니다.");
+            return;
+          }
+
+          eventData = parsed;
+          saveEvents();
+          renderTodayRoutine();
+          renderWeeklyRoutine();
+          renderCalendar();
+
+          if (selectedDateKey) {
+            renderSavedList();
+          }
+
+          alert("일정 복구가 완료되었습니다.");
+        } catch (error) {
+          alert("복구에 실패했습니다. JSON 파일을 확인해주세요.");
+        }
+      };
+
+      reader.readAsText(file);
+    }
+
+    prevBtn.addEventListener("click", () => {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      renderCalendar();
+    });
+
+    todayBtn.addEventListener("click", () => {
+      currentDate = new Date();
+      renderCalendar();
+    });
+
+    nextBtn.addEventListener("click", () => {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      renderCalendar();
+    });
+
+    backupBtn.addEventListener("click", backupEvents);
+
+    restoreBtn.addEventListener("click", () => {
+      restoreFile.click();
+    });
+
+    restoreFile.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      restoreEvents(file);
+      restoreFile.value = "";
+    });
+
+    addBtn.addEventListener("click", addEvent);
+
+    scheduleInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        addEvent();
+      }
+    });
+
+    closeBtn.addEventListener("click", closeModal);
+
+    modalBg.addEventListener("click", (e) => {
+      if (e.target === modalBg) {
+        closeModal();
+      }
+    });
+
+    renderTodayRoutine();
+    renderWeeklyRoutine();
+    renderCalendar();
+  </script>
+</body>
+</html>
