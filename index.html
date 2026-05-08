@@ -89,6 +89,7 @@
 
   <div class="size-buttons">
     <button id="smallBtn">- 작게</button>
+    <button id="resetBtn">초기화</button>
     <button id="largeBtn">+ 크게</button>
   </div>
 
@@ -127,7 +128,7 @@
         `${String(hours).padStart(2, '0')}:${minutes}:${seconds}`;
     }
 
-    let clockSize = Number(localStorage.getItem("clock_size")) || 100;
+    let clockSize = Number(localStorage.getItem("clock_size")) || 120;
 
     function applyClockSize() {
       document.getElementById("time").style.fontSize = clockSize + "px";
@@ -154,6 +155,12 @@
       localStorage.setItem("clock_size", clockSize);
       applyClockSize();
     });
+
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      clockSize = 120;
+      localStorage.setItem("clock_size", clockSize);
+      applyClockSize();
+      });
 
     applyClockSize();
 
