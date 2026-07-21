@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>나의 일정 달력</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -22,23 +20,14 @@
       padding: 24px 16px 40px;
     }
 
-    .header {
-      margin-bottom: 20px;
-    }
+    .header { margin-bottom: 20px; }
+    .title { margin: 0; font-size: 34px; font-weight: 700; }
+    .sub { margin-top: 8px; color: #666; font-size: 15px; }
 
-    .title {
-      margin: 0;
-      font-size: 34px;
-      font-weight: 700;
-    }
-
-    .sub {
-      margin-top: 8px;
-      color: #666;
-      font-size: 15px;
-    }
-
-    .calendar-box {
+    .calendar-box,
+    .today-routine-card,
+    .weekly-routine-card,
+    .memo-panel-card {
       background: #fff;
       border-radius: 16px;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
@@ -54,19 +43,12 @@
       flex-wrap: wrap;
     }
 
-    .month-title {
-      font-size: 26px;
-      font-weight: 700;
-      color: #1d4f91;
-    }
+    .month-title { font-size: 26px; font-weight: 700; color: #1d4f91; }
+    .top-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+    .button-gap { width: 16px; }
 
-    .top-buttons {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    button {
+    button,
+    .home-link {
       border: none;
       border-radius: 10px;
       background: #2f6fdd;
@@ -74,11 +56,14 @@
       padding: 10px 14px;
       font-size: 14px;
       cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    button:hover {
-      background: #2359b4;
-    }
+    button:hover,
+    .home-link:hover { background: #2359b4; }
 
     .week-header,
     .calendar-grid {
@@ -87,9 +72,7 @@
       gap: 10px;
     }
 
-    .week-header {
-      margin-bottom: 10px;
-    }
+    .week-header { margin-bottom: 10px; }
 
     .week-header div {
       text-align: center;
@@ -100,13 +83,8 @@
       border-radius: 10px;
     }
 
-    .week-header .sun {
-      color: #d64040;
-    }
-
-    .week-header .sat {
-      color: #2d63d8;
-    }
+    .week-header .sun, .sun-text { color: #d64040; }
+    .week-header .sat, .sat-text { color: #2d63d8; }
 
     .day-cell {
       min-height: 120px;
@@ -125,41 +103,12 @@
       box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
     }
 
-    .day-cell.empty {
-      background: #f1f3f5;
-      cursor: default;
-    }
+    .day-cell.empty { background: #f1f3f5; cursor: default; }
+    .day-cell.empty:hover { transform: none; box-shadow: none; }
+    .day-number { font-weight: 700; font-size: 15px; margin-bottom: 8px; }
+    .today { border: 2px solid #2f6fdd; background: #f5f9ff; }
 
-    .day-cell.empty:hover {
-      transform: none;
-      box-shadow: none;
-    }
-
-    .day-number {
-      font-weight: 700;
-      font-size: 15px;
-      margin-bottom: 8px;
-    }
-
-    .sun-text {
-      color: #d64040;
-    }
-
-    .sat-text {
-      color: #2d63d8;
-    }
-
-    .today {
-      border: 2px solid #2f6fdd;
-      background: #f5f9ff;
-    }
-
-    .event-list {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      overflow: hidden;
-    }
+    .event-list { display: flex; flex-direction: column; gap: 6px; overflow: hidden; }
 
     .event-item {
       background: #e8f0ff;
@@ -171,11 +120,7 @@
       word-break: break-word;
     }
 
-    .guide {
-      margin-top: 18px;
-      color: #666;
-      font-size: 14px;
-    }
+    .guide { margin-top: 18px; color: #666; font-size: 14px; }
 
     .modal-bg {
       position: fixed;
@@ -187,9 +132,7 @@
       padding: 16px;
     }
 
-    .modal-bg.show {
-      display: flex;
-    }
+    .modal-bg.show { display: flex; }
 
     .modal {
       width: 100%;
@@ -200,25 +143,13 @@
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
     }
 
-    .modal h2 {
-      margin: 0 0 10px;
-      font-size: 22px;
-    }
-
-    .selected-date {
-      color: #1d4f91;
-      font-weight: 700;
-      margin-bottom: 14px;
-    }
-
-    .input-row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
+    .modal h2 { margin: 0 0 10px; font-size: 22px; }
+    .selected-date { color: #1d4f91; font-weight: 700; margin-bottom: 14px; }
+    .input-row { display: flex; gap: 8px; margin-bottom: 12px; }
 
     .input-row input {
       flex: 1;
+      min-width: 0;
       height: 42px;
       border: 1px solid #cfd8e3;
       border-radius: 10px;
@@ -236,10 +167,7 @@
       margin-bottom: 14px;
     }
 
-    .saved-empty {
-      color: #888;
-      font-size: 14px;
-    }
+    .saved-empty { color: #888; font-size: 14px; }
 
     .saved-item {
       display: flex;
@@ -253,54 +181,19 @@
       margin-bottom: 8px;
     }
 
-    .saved-item:last-child {
-      margin-bottom: 0;
-    }
-
-    .saved-text {
-      font-size: 14px;
-      line-height: 1.4;
-      word-break: break-word;
-    }
-
-    .delete-btn {
-      background: #e14d4d;
-      padding: 8px 10px;
-      font-size: 13px;
-      flex-shrink: 0;
-    }
-
-    .delete-btn:hover {
-      background: #bf3e3e;
-    }
-
-    .modal-buttons {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-    }
-
-    .secondary-btn {
-      background: #8a94a3;
-    }
-
-    .secondary-btn:hover {
-      background: #707987;
-    }
+    .saved-item:last-child { margin-bottom: 0; }
+    .saved-text { font-size: 14px; line-height: 1.4; word-break: break-word; }
+    .delete-btn { background: #e14d4d; padding: 8px 10px; font-size: 13px; flex-shrink: 0; }
+    .delete-btn:hover { background: #bf3e3e; }
+    .modal-buttons { display: flex; justify-content: flex-end; gap: 8px; }
+    .secondary-btn { background: #8a94a3; }
+    .secondary-btn:hover { background: #707987; }
 
     .routine-wrap {
       display: grid;
       grid-template-columns: 1fr;
       gap: 16px;
       margin-bottom: 18px;
-    }
-
-    .today-routine-card,
-    .weekly-routine-card {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-      padding: 20px;
     }
 
     .section-label {
@@ -341,110 +234,28 @@
       padding: 14px 12px;
     }
 
-    .routine-day {
-      font-size: 15px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      color: #1d4f91;
-    }
-
-    .routine-text {
-      font-size: 14px;
-      line-height: 1.5;
-      color: #333;
-      word-break: keep-all;
-    }
-
-    .button-gap {
-      width: 16px;
-    }
-
-    .memo-panel-card {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-      padding: 20px;
-      margin-bottom: 18px;
-    }
-
-    .memo-panel-text {
-      font-size: 15px;
-      line-height: 1.8;
-      color: #333;
-      margin-bottom: 14px;
-    }
-
-    .memo-panel-link {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 10px 14px;
-      border-radius: 10px;
-      background: #4caf50;
-      color: white;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .memo-panel-link:hover {
-      background: #3f9443;
-    }
+    .routine-day { font-size: 15px; font-weight: 700; margin-bottom: 8px; color: #1d4f91; }
+    .routine-text { font-size: 14px; line-height: 1.5; color: #333; word-break: keep-all; }
+    .memo-panel-card { margin-bottom: 18px; }
+    .memo-panel-text { font-size: 15px; line-height: 1.8; color: #333; }
 
     @media (max-width: 900px) {
-      .week-header,
-      .calendar-grid {
-        gap: 6px;
-      }
-
-      .day-cell {
-        min-height: 100px;
-        padding: 8px;
-      }
-
-      .event-item {
-        font-size: 12px;
-        padding: 5px 6px;
-      }
-
-      .routine-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
+      .week-header, .calendar-grid { gap: 6px; }
+      .day-cell { min-height: 100px; padding: 8px; }
+      .event-item { font-size: 12px; padding: 5px 6px; }
+      .routine-grid { grid-template-columns: repeat(3, 1fr); }
     }
 
     @media (max-width: 640px) {
-      .title {
-        font-size: 28px;
-      }
-
-      .month-title {
-        font-size: 22px;
-      }
-
-      .week-header div {
-        font-size: 12px;
-        padding: 8px 0;
-      }
-
-      .day-number {
-        font-size: 13px;
-      }
-
-      .day-cell {
-        min-height: 88px;
-      }
-
-      .routine-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .today-routine-title {
-        font-size: 20px;
-      }
-
-      .today-routine-text {
-        font-size: 14px;
-      }
+      .title { font-size: 28px; }
+      .month-title { font-size: 22px; }
+      .week-header div { font-size: 12px; padding: 8px 0; }
+      .day-number { font-size: 13px; }
+      .day-cell { min-height: 88px; }
+      .routine-grid { grid-template-columns: repeat(2, 1fr); }
+      .today-routine-title { font-size: 20px; }
+      .today-routine-text { font-size: 14px; }
+      .button-gap { width: 4px; }
     }
   </style>
 </head>
@@ -453,7 +264,7 @@
   <div class="wrap">
     <div class="header">
       <h1 class="title">나의 일정 달력</h1>
-        <div class="sub">6월 목표는 새로운 결과보다 다음 프로젝트 시작 준비입니다. 하루 1시간만 해도 성공입니다.</div>
+      <div class="sub">7월 목표는 회사 업무 적응입니다. 개인 프로젝트보다 본업에 집중합니다.</div>
     </div>
 
     <div class="routine-wrap">
@@ -470,33 +281,27 @@
     </div>
 
     <div class="memo-panel-card">
-      <div class="section-label">6월 운영 메모</div>
+      <div class="section-label">7월 운영 메모</div>
       <div class="memo-panel-text">
-        • 목표: 프로젝트 확정 대기 / Docker 기초 / Git 습관 / ASP.NET Core API 시작<br>
-        • 1순위: 프로젝트 확정 대기<br>
-        • 2순위: Docker 기초 실습<br>
-        • 3순위: ASP.NET Core API 기본 구조 이해<br>
-        • 4순위: Git Clone / Commit / Push / Pull 반복<br>
-        • 5순위: 조선 ERP/MES 흐름 가볍게 보기<br>
-        • 절대 규칙: 무리하게 새 프로젝트 시작 금지, 하루 1시간만 해도 성공
+        • 1순위: 회사 업무와 업무 흐름에 적응하기<br>
+        • 반복적으로 불편한 업무와 수작업은 개발하지 말고 메모만 하기<br>
+        • 회사의 기술·데이터 구조와 나의 강점·부족한 점 관찰하기<br>
+        • 개인 프로젝트, PhotoCleaner, 크몽, 블로그는 중단이 아닌 판단 유예<br>
+        • 회사 데이터와 소스는 개인 프로젝트에 사용하지 않기<br>
+        • 새 기술이나 새 프로젝트로 방향을 자주 바꾸지 않기<br>
+        • 핵심 원칙: 앞으로 두 달은 회사 적응 자체가 개인 프로젝트
       </div>
-      <a href="notes.html" class="memo-panel-link">전체 운영 메모 보기</a>
     </div>
 
     <div class="calendar-box">
       <div class="calendar-top">
         <div class="month-title" id="monthTitle"></div>
         <div class="top-buttons">
-          <a href="index.html">
-            <button type="button">홈</button>
-          </a>
-
+          <a href="index.html" class="home-link">홈</a>
           <button id="prevBtn">이전 달</button>
           <button id="todayBtn">이번 달</button>
           <button id="nextBtn">다음 달</button>
-
           <div class="button-gap"></div>
-
           <button id="backupBtn">백업</button>
           <button id="restoreBtn">복구</button>
           <input type="file" id="restoreFile" accept=".json" style="display:none;" />
@@ -504,20 +309,12 @@
       </div>
 
       <div class="week-header">
-        <div class="sun">일</div>
-        <div>월</div>
-        <div>화</div>
-        <div>수</div>
-        <div>목</div>
-        <div>금</div>
-        <div class="sat">토</div>
+        <div class="sun">일</div><div>월</div><div>화</div><div>수</div>
+        <div>목</div><div>금</div><div class="sat">토</div>
       </div>
 
       <div class="calendar-grid" id="calendarGrid"></div>
-
-      <div class="guide">
-        팁: 날짜 칸을 누르면 일정 추가/삭제가 가능합니다.
-      </div>
+      <div class="guide">팁: 날짜 칸을 누르면 일정 추가/삭제가 가능합니다.</div>
     </div>
   </div>
 
@@ -525,72 +322,42 @@
     <div class="modal">
       <h2>일정 관리</h2>
       <div class="selected-date" id="selectedDateText"></div>
-
       <div class="input-row">
-        <input type="text" id="scheduleInput" placeholder="예: 블로그 글 초안 작성" />
+        <input type="text" id="scheduleInput" placeholder="예: 오늘 업무에서 배운 점 메모" />
         <button id="addBtn">추가</button>
       </div>
-
       <div class="saved-list" id="savedList"></div>
-
-      <div class="modal-buttons">
-        <button class="secondary-btn" id="closeBtn">닫기</button>
-      </div>
+      <div class="modal-buttons"><button class="secondary-btn" id="closeBtn">닫기</button></div>
     </div>
   </div>
 
   <script>
     const STORAGE_KEY = "simple_calendar_events_v1";
-
     let currentDate = new Date();
     let selectedDateKey = "";
     let eventData = loadEvents();
 
     const weeklyRoutine = [
-      {
-        dayName: "일요일",
-        text: "휴식 / 정리 | 한 주 작업 복습 | Docker / Git 메모 정리 | 무리하지 않기"
-      },
-      {
-        dayName: "월요일",
-        text: "Git 복습 | clone / status / add / commit / push 흐름 1회 정리 | 개인 웹 수정은 최소만"
-      },
-      {
-        dayName: "화요일",
-        text: "Docker 기초 | image / container / volume 개념 복습 | 간단한 컨테이너 실행"
-      },
-      {
-        dayName: "수요일",
-        text: "Docker Compose | compose.yml 구조 보기 | MSSQL 또는 nginx 컨테이너 실습"
-      },
-      {
-        dayName: "목요일",
-        text: "ASP.NET Core API | Controller / GET / POST 구조 보기 | Swagger 실행 확인"
-      },
-      {
-        dayName: "금요일",
-        text: "조선 ERP/MES 가볍게 보기 | 생산 / 자재 / 공정 / 상태 흐름 정리 | 부담 없이 30분"
-      },
-      {
-        dayName: "토요일",
-        text: "집중 실습 | Docker + ASP.NET Core API 연결 흐름 보기 | 가능하면 작은 예제 1개"
-      }
+      { dayName: "일요일", text: "충분한 휴식 | 한 주 업무 복습 | 다음 주 준비 | 무리하지 않기" },
+      { dayName: "월요일", text: "회사 업무 적응 | 새 업무 흐름 이해 | 필요한 내용만 메모하기" },
+      { dayName: "화요일", text: "반복 업무 확인 | 자주 사용하는 기능 익히기 | 질문 정리하기" },
+      { dayName: "수요일", text: "업무 속도보다 정확성 | 실수 줄이기 | 배운 내용 기록하기" },
+      { dayName: "목요일", text: "회사 시스템 이해 | 데이터 흐름 관찰 | 자동화 가능성은 메모만 하기" },
+      { dayName: "금요일", text: "한 주 업무 정리 | 잘한 점과 어려운 점 확인 | 다음 주 준비" },
+      { dayName: "토요일", text: "필요하면 업무 메모 30분 정리 | 개인 개발은 선택 | 나머지는 충분히 쉬기" }
     ];
 
     const monthTitle = document.getElementById("monthTitle");
     const calendarGrid = document.getElementById("calendarGrid");
-
     const todayRoutineTitle = document.getElementById("todayRoutineTitle");
     const todayRoutineText = document.getElementById("todayRoutineText");
     const routineGrid = document.getElementById("routineGrid");
-
     const prevBtn = document.getElementById("prevBtn");
     const todayBtn = document.getElementById("todayBtn");
     const nextBtn = document.getElementById("nextBtn");
     const backupBtn = document.getElementById("backupBtn");
     const restoreBtn = document.getElementById("restoreBtn");
     const restoreFile = document.getElementById("restoreFile");
-
     const modalBg = document.getElementById("modalBg");
     const selectedDateText = document.getElementById("selectedDateText");
     const scheduleInput = document.getElementById("scheduleInput");
@@ -601,39 +368,25 @@
     function loadEvents() {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return {};
-      try {
-        return JSON.parse(raw);
-      } catch (e) {
-        return {};
-      }
+      try { return JSON.parse(raw); } catch (e) { return {}; }
     }
 
-    function saveEvents() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(eventData));
-    }
+    function saveEvents() { localStorage.setItem(STORAGE_KEY, JSON.stringify(eventData)); }
 
     function formatDateKey(year, month, day) {
-      const mm = String(month + 1).padStart(2, "0");
-      const dd = String(day).padStart(2, "0");
-      return `${year}-${mm}-${dd}`;
+      return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
     }
 
     function isToday(year, month, day) {
       const now = new Date();
-      return (
-        now.getFullYear() === year &&
-        now.getMonth() === month &&
-        now.getDate() === day
-      );
+      return now.getFullYear() === year && now.getMonth() === month && now.getDate() === day;
     }
 
     function renderCalendar() {
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth();
-
       monthTitle.textContent = `${year}년 ${month + 1}월`;
       calendarGrid.innerHTML = "";
-
       const firstDay = new Date(year, month, 1).getDay();
       const lastDate = new Date(year, month + 1, 0).getDate();
 
@@ -646,13 +399,9 @@
       for (let day = 1; day <= lastDate; day++) {
         const cell = document.createElement("div");
         cell.className = "day-cell";
-
         const weekday = new Date(year, month, day).getDay();
         const key = formatDateKey(year, month, day);
-
-        if (isToday(year, month, day)) {
-          cell.classList.add("today");
-        }
+        if (isToday(year, month, day)) cell.classList.add("today");
 
         const dayNumber = document.createElement("div");
         dayNumber.className = "day-number";
@@ -662,7 +411,6 @@
 
         const eventList = document.createElement("div");
         eventList.className = "event-list";
-
         const events = eventData[key] || [];
         events.slice(0, 3).forEach(text => {
           const item = document.createElement("div");
@@ -680,9 +428,7 @@
 
         cell.appendChild(dayNumber);
         cell.appendChild(eventList);
-
         cell.addEventListener("click", () => openModal(key, year, month, day));
-
         calendarGrid.appendChild(cell);
       }
     }
@@ -696,15 +442,11 @@
       scheduleInput.focus();
     }
 
-    function closeModal() {
-      modalBg.classList.remove("show");
-      selectedDateKey = "";
-    }
+    function closeModal() { modalBg.classList.remove("show"); selectedDateKey = ""; }
 
     function renderSavedList() {
       const events = eventData[selectedDateKey] || [];
       savedList.innerHTML = "";
-
       if (events.length === 0) {
         const empty = document.createElement("div");
         empty.className = "saved-empty";
@@ -716,18 +458,13 @@
       events.forEach((text, index) => {
         const row = document.createElement("div");
         row.className = "saved-item";
-
         const textDiv = document.createElement("div");
         textDiv.className = "saved-text";
         textDiv.textContent = text;
-
         const delBtn = document.createElement("button");
         delBtn.className = "delete-btn";
         delBtn.textContent = "삭제";
-        delBtn.addEventListener("click", () => {
-          deleteEvent(index);
-        });
-
+        delBtn.addEventListener("click", () => deleteEvent(index));
         row.appendChild(textDiv);
         row.appendChild(delBtn);
         savedList.appendChild(row);
@@ -736,15 +473,8 @@
 
     function addEvent() {
       const text = scheduleInput.value.trim();
-      if (!text) {
-        alert("일정을 입력해주세요.");
-        return;
-      }
-
-      if (!eventData[selectedDateKey]) {
-        eventData[selectedDateKey] = [];
-      }
-
+      if (!text) { alert("일정을 입력해주세요."); return; }
+      if (!eventData[selectedDateKey]) eventData[selectedDateKey] = [];
       eventData[selectedDateKey].push(text);
       saveEvents();
       scheduleInput.value = "";
@@ -755,13 +485,8 @@
 
     function deleteEvent(index) {
       if (!eventData[selectedDateKey]) return;
-
       eventData[selectedDateKey].splice(index, 1);
-
-      if (eventData[selectedDateKey].length === 0) {
-        delete eventData[selectedDateKey];
-      }
-
+      if (eventData[selectedDateKey].length === 0) delete eventData[selectedDateKey];
       saveEvents();
       renderSavedList();
       renderCalendar();
@@ -769,19 +494,15 @@
 
     function renderWeeklyRoutine() {
       routineGrid.innerHTML = "";
-
       weeklyRoutine.forEach(item => {
         const box = document.createElement("div");
         box.className = "routine-item";
-
         const day = document.createElement("div");
         day.className = "routine-day";
         day.textContent = item.dayName;
-
         const text = document.createElement("div");
         text.className = "routine-text";
         text.textContent = item.text;
-
         box.appendChild(day);
         box.appendChild(text);
         routineGrid.appendChild(box);
@@ -789,102 +510,58 @@
     }
 
     function renderTodayRoutine() {
-      const now = new Date();
-      const dayIndex = now.getDay();
-      const todayInfo = weeklyRoutine[dayIndex];
-
+      const todayInfo = weeklyRoutine[new Date().getDay()];
       todayRoutineTitle.textContent = `${todayInfo.dayName} 루틴`;
       todayRoutineText.innerHTML = todayInfo.text.replaceAll(" | ", "<br>");
     }
 
     function backupEvents() {
-      const dataStr = JSON.stringify(eventData, null, 2);
-      const blob = new Blob([dataStr], { type: "application/json" });
+      const blob = new Blob([JSON.stringify(eventData, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
-
       const a = document.createElement("a");
       a.href = url;
       a.download = "calendar-backup.json";
       a.click();
-
       URL.revokeObjectURL(url);
     }
 
     function restoreEvents(file) {
       if (!file) return;
-
       const reader = new FileReader();
-
       reader.onload = function (e) {
         try {
           const parsed = JSON.parse(e.target.result);
-
           if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
             alert("올바른 백업 파일 형식이 아닙니다.");
             return;
           }
-
           eventData = parsed;
           saveEvents();
           renderTodayRoutine();
           renderWeeklyRoutine();
           renderCalendar();
-
-          if (selectedDateKey) {
-            renderSavedList();
-          }
-
+          if (selectedDateKey) renderSavedList();
           alert("일정 복구가 완료되었습니다.");
         } catch (error) {
           alert("복구에 실패했습니다. JSON 파일을 확인해주세요.");
         }
       };
-
       reader.readAsText(file);
     }
 
-    prevBtn.addEventListener("click", () => {
-      currentDate.setMonth(currentDate.getMonth() - 1);
-      renderCalendar();
-    });
-
-    todayBtn.addEventListener("click", () => {
-      currentDate = new Date();
-      renderCalendar();
-    });
-
-    nextBtn.addEventListener("click", () => {
-      currentDate.setMonth(currentDate.getMonth() + 1);
-      renderCalendar();
-    });
-
+    prevBtn.addEventListener("click", () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); });
+    todayBtn.addEventListener("click", () => { currentDate = new Date(); renderCalendar(); });
+    nextBtn.addEventListener("click", () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); });
     backupBtn.addEventListener("click", backupEvents);
-
-    restoreBtn.addEventListener("click", () => {
-      restoreFile.click();
-    });
-
-    restoreFile.addEventListener("change", (e) => {
-      const file = e.target.files[0];
-      restoreEvents(file);
+    restoreBtn.addEventListener("click", () => restoreFile.click());
+    restoreFile.addEventListener("change", e => {
+      restoreEvents(e.target.files[0]);
       restoreFile.value = "";
     });
-
     addBtn.addEventListener("click", addEvent);
-
-    scheduleInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        addEvent();
-      }
-    });
-
+    scheduleInput.addEventListener("keydown", e => { if (e.key === "Enter") addEvent(); });
     closeBtn.addEventListener("click", closeModal);
-
-    modalBg.addEventListener("click", (e) => {
-      if (e.target === modalBg) {
-        closeModal();
-      }
-    });
+    modalBg.addEventListener("click", e => { if (e.target === modalBg) closeModal(); });
 
     renderTodayRoutine();
     renderWeeklyRoutine();
