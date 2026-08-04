@@ -120,6 +120,18 @@
       word-break: break-word;
     }
 
+    .calendar-label {
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 13px;
+      line-height: 1.3;
+      font-weight: 700;
+    }
+
+    .holiday-label { background: #ffe9e9; color: #b52f2f; }
+    .season-label { background: #fff3d9; color: #8a5a00; }
+    .holiday-day { background: #fffafa; border-color: #efcaca; }
+
     .guide { margin-top: 18px; color: #666; font-size: 14px; }
 
     .modal-bg {
@@ -264,7 +276,7 @@
   <div class="wrap">
     <div class="header">
       <h1 class="title">나의 일정 달력</h1>
-      <div class="sub">7월 목표는 회사 업무 적응입니다. 개인 프로젝트보다 본업에 집중합니다.</div>
+      <div class="sub">8월 목표는 회사 업무를 안정적으로 익히고, 반복 업무의 흐름을 정리하는 것입니다. 본업을 우선하면서 충분한 회복 시간을 확보합니다.</div>
     </div>
 
     <div class="routine-wrap">
@@ -281,15 +293,15 @@
     </div>
 
     <div class="memo-panel-card">
-      <div class="section-label">7월 운영 메모</div>
+      <div class="section-label">8월 운영 메모</div>
       <div class="memo-panel-text">
-        • 1순위: 회사 업무와 업무 흐름에 적응하기<br>
-        • 반복적으로 불편한 업무와 수작업은 개발하지 말고 메모만 하기<br>
-        • 회사의 기술·데이터 구조와 나의 강점·부족한 점 관찰하기<br>
-        • 개인 프로젝트, PhotoCleaner, 크몽, 블로그는 중단이 아닌 판단 유예<br>
+        • 1순위: 회사 업무를 안정적으로 수행하고 우선순위 익히기<br>
+        • 반복되는 실수와 질문은 체크리스트로 정리하기<br>
+        • 불편한 수작업과 자동화 후보는 개발하지 말고 메모만 하기<br>
+        • 매주 금요일에 잘한 점 1개와 개선할 점 1개 기록하기<br>
         • 회사 데이터와 소스는 개인 프로젝트에 사용하지 않기<br>
-        • 새 기술이나 새 프로젝트로 방향을 자주 바꾸지 않기<br>
-        • 핵심 원칙: 앞으로 두 달은 회사 적응 자체가 개인 프로젝트
+        • 개인 프로젝트는 여유가 있을 때 작은 작업 하나만 선택하기<br>
+        • 핵심 원칙: 속도보다 정확성, 확장보다 안정화
       </div>
     </div>
 
@@ -339,13 +351,19 @@
 
     const weeklyRoutine = [
       { dayName: "일요일", text: "충분한 휴식 | 한 주 업무 복습 | 다음 주 준비 | 무리하지 않기" },
-      { dayName: "월요일", text: "회사 업무 적응 | 새 업무 흐름 이해 | 필요한 내용만 메모하기" },
+      { dayName: "월요일", text: "이번 주 우선순위 확인 | 새 업무 흐름 이해 | 필요한 내용만 메모하기" },
       { dayName: "화요일", text: "반복 업무 확인 | 자주 사용하는 기능 익히기 | 질문 정리하기" },
       { dayName: "수요일", text: "업무 속도보다 정확성 | 실수 줄이기 | 배운 내용 기록하기" },
       { dayName: "목요일", text: "회사 시스템 이해 | 데이터 흐름 관찰 | 자동화 가능성은 메모만 하기" },
-      { dayName: "금요일", text: "한 주 업무 정리 | 잘한 점과 어려운 점 확인 | 다음 주 준비" },
-      { dayName: "토요일", text: "필요하면 업무 메모 30분 정리 | 개인 개발은 선택 | 나머지는 충분히 쉬기" }
+      { dayName: "금요일", text: "한 주 업무 정리 | 잘한 점 1개와 개선할 점 1개 기록 | 다음 주 준비" },
+      { dayName: "토요일", text: "업무 메모는 최대 30분 | 개인 개발은 선택 | 나머지는 충분히 쉬기" }
     ];
+
+    const calendarHighlights = {
+      "2026-08-14": { text: "말복", type: "season" },
+      "2026-08-15": { text: "광복절", type: "holiday" },
+      "2026-08-17": { text: "광복절 대체공휴일", type: "holiday" }
+    };
 
     const monthTitle = document.getElementById("monthTitle");
     const calendarGrid = document.getElementById("calendarGrid");
@@ -401,7 +419,9 @@
         cell.className = "day-cell";
         const weekday = new Date(year, month, day).getDay();
         const key = formatDateKey(year, month, day);
+        const highlight = calendarHighlights[key];
         if (isToday(year, month, day)) cell.classList.add("today");
+        if (highlight?.type === "holiday") cell.classList.add("holiday-day");
 
         const dayNumber = document.createElement("div");
         dayNumber.className = "day-number";
@@ -411,6 +431,14 @@
 
         const eventList = document.createElement("div");
         eventList.className = "event-list";
+
+        if (highlight) {
+          const label = document.createElement("div");
+          label.className = `calendar-label ${highlight.type}-label`;
+          label.textContent = highlight.text;
+          eventList.appendChild(label);
+        }
+
         const events = eventData[key] || [];
         events.slice(0, 3).forEach(text => {
           const item = document.createElement("div");
@@ -549,9 +577,14 @@
       reader.readAsText(file);
     }
 
-    prevBtn.addEventListener("click", () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); });
+    function moveMonth(offset) {
+      currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + offset, 1);
+      renderCalendar();
+    }
+
+    prevBtn.addEventListener("click", () => moveMonth(-1));
     todayBtn.addEventListener("click", () => { currentDate = new Date(); renderCalendar(); });
-    nextBtn.addEventListener("click", () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); });
+    nextBtn.addEventListener("click", () => moveMonth(1));
     backupBtn.addEventListener("click", backupEvents);
     restoreBtn.addEventListener("click", () => restoreFile.click());
     restoreFile.addEventListener("change", e => {
